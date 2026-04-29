@@ -13,10 +13,3 @@ $RECYCLE.BIN/
 # Node.js
 node_modules/
 
-# Python / backend
-backend/.venv/
-backend/.env
-backend/.env.*
-backend/__pycache__/
-backend/**/*.pyc
-backend/db.sqlite3
