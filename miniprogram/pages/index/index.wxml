@@ -1,4 +1,0 @@
-<!--index.wxml-->
-<view class="container">
-  <web-view src="https://longshunde.asia/#/home"></web-view> 
-</view>
