@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '../../db/prisma.js'
 
 type ListDiariesBody = {
@@ -7,6 +8,18 @@ type ListDiariesBody = {
   pageSize?: number
   keyword?: string
 }
+
+const diaryListSelect = {
+  id: true,
+  userId: true,
+  title: true,
+  content: true,
+  entryDate: true,
+  createdAt: true,
+  updatedAt: true,
+} satisfies Prisma.DiarySelect
+
+type DiaryListRow = Prisma.DiaryGetPayload<{ select: typeof diaryListSelect }>
 
 const listDiariesRoutes: FastifyPluginAsync = async (app) => {
   const handler = async (req: any, reply: any) => {
@@ -40,23 +53,15 @@ const listDiariesRoutes: FastifyPluginAsync = async (app) => {
         orderBy: { entryDate: 'desc' },
         skip: (page - 1) * pageSize,
         take: pageSize,
-        select: {
-          id: true,
-          userId: true,
-          title: true,
-          content: true,
-          entryDate: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      }),
+        select: diaryListSelect,
+      }) as Promise<DiaryListRow[]>,
     ])
 
     return reply.status(200).send({
       page,
       pageSize,
       total,
-      data: diaries.map((d) => ({
+      data: diaries.map((d: DiaryListRow) => ({
         id: d.id,
         userId: d.userId,
         title: d.title,
