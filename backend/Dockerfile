@@ -18,7 +18,7 @@ RUN npm run build
 FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=deps /app/node_modules /app/node_modules
+COPY --from=build /app/node_modules /app/node_modules
 COPY package.json /app/package.json
 COPY prisma /app/prisma
 COPY --from=build /app/dist /app/dist
