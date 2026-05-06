@@ -1,0 +1,14 @@
+# Build Vue (Vite) static assets, then serve with nginx + API reverse proxy.
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY index.html vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json ./
+COPY public ./public
+COPY src ./src
+RUN npm run build
+
+FROM nginx:alpine
+COPY nginx.docker.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80

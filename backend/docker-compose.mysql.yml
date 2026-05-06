@@ -1,10 +1,11 @@
 services:
-  nginx:
-    image: nginx:alpine
+  # Vue 静态资源 + 反代 /api、/uploads、/docs 到 api 容器（见 ../fronted/Dockerfile）
+  web:
+    build:
+      context: ../fronted
+      dockerfile: Dockerfile
     ports:
       - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - api
 
@@ -35,7 +36,7 @@ services:
       PORT: 3000
       NODE_ENV: production
       DATABASE_URL: mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-app}@mysql:3306/${MYSQL_DATABASE:-app}
-    # 不需要对公网暴露 3000，统一走 nginx 的 80 端口
+    # 不需要对公网暴露 3000，统一走 web 容器的 80 端口
     depends_on:
       mysql:
         condition: service_healthy

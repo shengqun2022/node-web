@@ -54,22 +54,24 @@ npm run dev
 
 ## MySQL（Docker）+ 迁移 + 启动（推荐）
 
+公网 / 生产环境完整步骤（前端 `web` 容器、安全组、排障）见 **[DOCKER_DEPLOY.md](./DOCKER_DEPLOY.md)**。
+
 ```bash
 cd backend
 cp .env.example .env
 docker compose -f docker-compose.mysql.yml up -d --build
 ```
 
-访问：
+访问（compose 默认由 `web` 暴露 **80**，内部再反代到 `api:3000`）：
 
-- Root：`http://localhost:3000/`
-- Health：`http://localhost:3000/healthz`
-- Swagger UI：`http://localhost:3000/docs`
+- 前端：`http://localhost/`
+- 后端信息：`http://localhost/api/`
+- Swagger UI：`http://localhost/docs`
 
 注册示例（201）：
 
 ```bash
-curl -X POST "http://localhost:3000/auth/register" \
+curl -X POST "http://localhost/api/auth/register" \
   -H "content-type: application/json" \
   -d '{"email":"a@example.com","password":"password123"}'
 ```
